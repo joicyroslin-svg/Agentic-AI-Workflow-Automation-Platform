@@ -2,10 +2,9 @@ import os
 
 import streamlit as st
 from dotenv import load_dotenv
+from google import genai
 
 load_dotenv()
-
-REQUEST_TIMEOUT_MS = int(os.getenv("GEMINI_TIMEOUT_MS", "20000"))
 
 
 def get_api_key():
@@ -29,23 +28,13 @@ def ask_gemini(prompt):
     if not api_key:
         return "Gemini API key is missing. Please add GEMINI_API_KEY in your .env file."
 
-    try:
-        from google import genai
-        from google.genai import types
-    except Exception as exc:
-        return f"Gemini library failed to load: {exc}"
-
-    client = genai.Client(
-        api_key=api_key,
-        http_options=types.HttpOptions(timeout=REQUEST_TIMEOUT_MS),
-    )
+    client = genai.Client(api_key=api_key)
 
     models = [
-        "gemini-2.5-flash",
         "gemini-2.0-flash",
+        "gemini-2.5-flash",
         "gemini-1.5-flash"
     ]
-    errors = []
 
     for model in models:
         try:
@@ -57,17 +46,13 @@ def ask_gemini(prompt):
             if response.text:
                 return response.text
 
-        except Exception as exc:
-            errors.append(f"{model}: {exc}")
+        except Exception:
             continue
 
-    return (
-        "AI response failed. Please check your API key or internet connection.\n\n"
-        + "\n".join(errors[-3:])
-    )
+    return "AI response failed. Please check your API key or internet connection."
 
 
-def planner_agent(goal, role, timeline):
+def planner_agent(goal, role, timeline, rag_context=""):
     prompt = f"""
 You are a Planner Agent in an Agentic AI Workflow Automation Platform.
 
@@ -80,12 +65,24 @@ User Role:
 Timeline:
 {timeline}
 
+Retrieved Document Context:
+{rag_context}
+
 Create a clear workflow plan.
+
+Rules:
+- If document context is available, use it while planning.
+- If document context is missing, create a general workflow plan.
+- Keep the output practical for a student or fresher.
+- Do not create fake information.
 
 Format:
 
 ## Goal Understanding
 Explain the goal in simple words.
+
+## Context Used
+Mention whether uploaded document context was used or not.
 
 ## Main Objective
 What should the user achieve?
@@ -110,14 +107,12 @@ Mention what can go wrong.
 
 ## Next Best Action
 Tell the user what to do first.
-
-Keep it simple, practical, and useful for a student or fresher.
 """
 
     return ask_gemini(prompt)
 
 
-def task_agent(goal, role, timeline, workflow_plan):
+def task_agent(goal, role, timeline, workflow_plan, rag_context=""):
     prompt = f"""
 You are a Task Agent in an Agentic AI Workflow Automation Platform.
 
@@ -129,6 +124,9 @@ User Role:
 
 Timeline:
 {timeline}
+
+Retrieved Document Context:
+{rag_context}
 
 Planner Agent Output:
 {workflow_plan}
@@ -145,6 +143,7 @@ Rules:
 - Priority must be High, Medium, or Low
 - Status must be Not Started
 - Deadline should be simple, like Day 1, Day 2, Day 3, Week 1, etc.
+- Use document context if available
 - Do not add extra explanation before or after the table
 
 Example:
