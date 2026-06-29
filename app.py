@@ -4,6 +4,9 @@ import importlib
 import sys
 
 
+if "utils.agents" in sys.modules:
+    importlib.reload(sys.modules["utils.agents"])
+
 if "utils.app" in sys.modules:
     importlib.reload(sys.modules["utils.app"])
 else:

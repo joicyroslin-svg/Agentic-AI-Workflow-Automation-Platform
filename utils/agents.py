@@ -153,3 +153,53 @@ Write recruiter message | Medium | Not Started | Day 2
 """
 
     return ask_gemini(prompt)
+
+
+def priority_agent(goal, role, timeline, workflow_plan, task_table_text, rag_context=""):
+    prompt = f"""
+You are a Priority Agent in an Agentic AI Workflow Automation Platform.
+
+User Goal:
+{goal}
+
+User Role:
+{role}
+
+Timeline:
+{timeline}
+
+Retrieved Document Context:
+{rag_context}
+
+Workflow Plan:
+{workflow_plan}
+
+Current Task Checklist:
+{task_table_text}
+
+Analyze the current tasks and give priority guidance.
+
+Format:
+
+## Priority Summary
+Explain which tasks matter most.
+
+## Critical Tasks
+List the top 3 tasks the user should do first.
+
+## Blocker Risk
+Mention tasks that can block progress if delayed.
+
+## Time Management Plan
+Give a simple plan based on the selected timeline.
+
+## Completion Strategy
+Explain how to finish the workflow effectively.
+
+## Next Best Action
+Tell the user exactly what to do next.
+
+Keep it simple, practical, and useful for a student or fresher.
+"""
+
+    return ask_gemini(prompt)
