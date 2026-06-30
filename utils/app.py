@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-from utils.agents import planner_agent, task_agent, priority_agent
+from utils.agents import planner_agent, task_agent, priority_agent, message_agent
 from utils.document_reader import (
     extract_text_from_pdf,
     extract_text_from_txt,
@@ -200,6 +200,13 @@ def init_session_state():
 
     if "current_timeline" not in st.session_state:
         st.session_state.current_timeline = "7 Days"
+    if "message_report" not in st.session_state:
+        st.session_state.message_report = ""
+
+    if "company_name" not in st.session_state:
+        st.session_state.company_name = ""
+    if "contact_person" not in st.session_state:
+        st.session_state.contact_person = ""    
 
 
 def parse_task_text(task_text):

@@ -203,3 +203,79 @@ Keep it simple, practical, and useful for a student or fresher.
 """
 
     return ask_gemini(prompt)
+
+
+def message_agent(
+    goal,
+    role,
+    timeline,
+    company_name,
+    contact_person,
+    workflow_plan,
+    task_table_text,
+    priority_report,
+    rag_context=""
+):
+    prompt = f"""
+You are a Message Agent in an Agentic AI Workflow Automation Platform.
+
+User Goal:
+{goal}
+
+User Role:
+{role}
+
+Timeline:
+{timeline}
+
+Target Company:
+{company_name}
+
+Contact Person / Recruiter:
+{contact_person}
+
+Retrieved Document Context:
+{rag_context}
+
+Workflow Plan:
+{workflow_plan}
+
+Task Checklist:
+{task_table_text}
+
+Priority Agent Report:
+{priority_report}
+
+Create professional communication drafts.
+
+Rules:
+- Keep messages polite, clear, and professional.
+- Suitable for student/fresher/internship applications.
+- Do not exaggerate skills.
+- Keep LinkedIn messages short.
+- Email should be formal.
+- Follow-up should be respectful.
+
+Format:
+
+## Recruiter Email
+Subject:
+Body:
+
+## LinkedIn Connection Note
+Write a short connection request under 300 characters.
+
+## LinkedIn DM After Connection
+Write a short message asking about internship/job opportunity.
+
+## Follow-Up Message
+Write a polite follow-up message.
+
+## Short Self-Introduction
+Write a 3-4 line intro the user can use in networking.
+
+## Message Improvement Tips
+Give 3 simple tips to improve outreach.
+"""
+
+    return ask_gemini(prompt)
