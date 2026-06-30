@@ -1,5 +1,3 @@
-from html import escape
-
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -30,7 +28,22 @@ st.set_page_config(
 st.markdown(
     """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg: #070b18;
+    --panel: rgba(15, 23, 42, 0.92);
+    --panel-soft: rgba(30, 41, 59, 0.72);
+    --border: rgba(148, 163, 184, 0.20);
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --cyan: #22d3ee;
+    --blue: #3b82f6;
+    --violet: #8b5cf6;
+    --green: #22c55e;
+    --orange: #f97316;
+    --red: #ef4444;
+}
 
 html, body, [class*="css"] {
     font-family: 'Inter', sans-serif;
@@ -38,20 +51,22 @@ html, body, [class*="css"] {
 
 .stApp {
     background:
-        radial-gradient(circle at top left, rgba(45, 212, 191, 0.15), transparent 28%),
-        radial-gradient(circle at top right, rgba(168, 85, 247, 0.17), transparent 30%),
-        linear-gradient(135deg, #020617 0%, #0f172a 50%, #111827 100%);
-    color: #e5e7eb;
+        radial-gradient(circle at 15% 10%, rgba(34, 211, 238, 0.16), transparent 28%),
+        radial-gradient(circle at 85% 0%, rgba(139, 92, 246, 0.20), transparent 30%),
+        radial-gradient(circle at 65% 85%, rgba(59, 130, 246, 0.12), transparent 32%),
+        linear-gradient(135deg, #020617 0%, #0f172a 55%, #111827 100%);
+    color: var(--text);
 }
 
 .block-container {
-    max-width: 1520px;
+    max-width: 1500px;
     padding-top: 1.2rem;
     padding-bottom: 3rem;
 }
 
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #020617, #111827);
+    background:
+        linear-gradient(180deg, rgba(2, 6, 23, 0.98), rgba(15, 23, 42, 0.98));
     border-right: 1px solid rgba(148, 163, 184, 0.18);
 }
 
@@ -59,62 +74,62 @@ section[data-testid="stSidebar"] * {
     color: #e5e7eb;
 }
 
-.control-header {
+.command-header {
     background:
-        linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.9)),
-        radial-gradient(circle at 90% 10%, rgba(45, 212, 191, 0.25), transparent 30%);
-    border: 1px solid rgba(148, 163, 184, 0.22);
-    border-radius: 30px;
-    padding: 34px;
-    margin-bottom: 24px;
+        linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.88)),
+        radial-gradient(circle at 85% 20%, rgba(34, 211, 238, 0.20), transparent 30%);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 32px;
+    margin-bottom: 22px;
     box-shadow: 0 24px 80px rgba(0,0,0,0.35);
 }
 
-.kicker {
-    color: #2dd4bf;
-    font-weight: 900;
+.command-kicker {
+    color: var(--cyan);
+    font-weight: 800;
     letter-spacing: 0.12em;
-    font-size: 12px;
     text-transform: uppercase;
+    font-size: 12px;
     margin-bottom: 12px;
 }
 
-.main-title {
+.command-title {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 50px;
+    color: #f8fafc;
+    font-size: 48px;
     line-height: 1.02;
     font-weight: 700;
-    color: #f8fafc;
     margin-bottom: 12px;
 }
 
-.main-subtitle {
+.command-subtitle {
     color: #cbd5e1;
     font-size: 16px;
     line-height: 1.7;
-    max-width: 980px;
+    max-width: 920px;
 }
 
-.feature-strip {
+.status-strip {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-    margin-top: 24px;
+    margin-top: 22px;
 }
 
-.feature-chip {
-    background: rgba(45, 212, 191, 0.08);
-    border: 1px solid rgba(45, 212, 191, 0.25);
-    color: #ccfbf1;
-    padding: 9px 14px;
+.status-pill {
+    border: 1px solid rgba(34, 211, 238, 0.28);
+    background: rgba(8, 47, 73, 0.38);
+    color: #cffafe;
+    padding: 9px 13px;
     border-radius: 999px;
-    font-size: 12px;
     font-weight: 800;
+    font-size: 12px;
 }
 
 .metric-card {
     background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.76));
-    border: 1px solid rgba(148, 163, 184, 0.22);
+    border: 1px solid var(--border);
     border-radius: 22px;
     padding: 20px;
     min-height: 128px;
@@ -122,7 +137,7 @@ section[data-testid="stSidebar"] * {
 }
 
 .metric-label {
-    color: #94a3b8;
+    color: var(--muted);
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 0.08em;
@@ -131,9 +146,9 @@ section[data-testid="stSidebar"] * {
 
 .metric-value {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 34px;
-    font-weight: 700;
     color: #f8fafc;
+    font-size: 36px;
+    font-weight: 700;
     margin-top: 10px;
 }
 
@@ -144,8 +159,8 @@ section[data-testid="stSidebar"] * {
 }
 
 .panel {
-    background: rgba(15, 23, 42, 0.88);
-    border: 1px solid rgba(148, 163, 184, 0.20);
+    background: rgba(15, 23, 42, 0.86);
+    border: 1px solid var(--border);
     border-radius: 24px;
     padding: 22px;
     box-shadow: 0 18px 60px rgba(0,0,0,0.28);
@@ -169,8 +184,8 @@ section[data-testid="stSidebar"] * {
 
 .agent-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 14px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
 }
 
 .agent-card {
@@ -184,7 +199,7 @@ section[data-testid="stSidebar"] * {
     width: 34px;
     height: 34px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #2dd4bf, #8b5cf6);
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
     color: #020617;
     font-weight: 900;
     display: flex;
@@ -195,29 +210,20 @@ section[data-testid="stSidebar"] * {
 
 .agent-name {
     color: #f8fafc;
-    font-weight: 900;
-    margin-bottom: 5px;
+    font-weight: 800;
+    margin-bottom: 6px;
 }
 
-.agent-desc {
-    color: #94a3b8;
-    font-size: 13px;
-    line-height: 1.5;
-    min-height: 42px;
-}
-
-.agent-done {
+.agent-status {
     color: #22c55e;
     font-size: 13px;
-    font-weight: 900;
-    margin-top: 10px;
+    font-weight: 800;
 }
 
 .agent-waiting {
     color: #94a3b8;
     font-size: 13px;
-    font-weight: 900;
-    margin-top: 10px;
+    font-weight: 800;
 }
 
 .summary-box {
@@ -242,24 +248,32 @@ section[data-testid="stSidebar"] * {
 }
 
 .evidence-box {
-    background: rgba(20, 184, 166, 0.10);
-    border-left: 4px solid #2dd4bf;
+    background: rgba(8, 47, 73, 0.28);
+    border-left: 4px solid var(--cyan);
     padding: 14px;
     border-radius: 14px;
-    margin-bottom: 14px;
+    color: #dbeafe;
 }
 
 .report-box {
-    background: rgba(2, 6, 23, 0.55);
-    border: 1px solid rgba(148, 163, 184, 0.20);
-    border-radius: 20px;
-    padding: 22px;
+    background: rgba(2, 6, 23, 0.44);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 18px;
+    padding: 18px;
+}
+
+.small-label {
+    color: #94a3b8;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 800;
 }
 
 .stButton>button {
     width: 100%;
     border-radius: 14px;
-    background: linear-gradient(135deg, #14b8a6, #6366f1);
+    background: linear-gradient(135deg, #06b6d4, #6366f1);
     color: white;
     font-weight: 900;
     padding: 13px;
@@ -273,7 +287,7 @@ section[data-testid="stSidebar"] * {
     padding: 13px;
 }
 
-div[data-testid="stDataEditor"] {
+div[data-testid="stDataFrame"], div[data-testid="stDataEditor"] {
     border-radius: 16px;
     overflow: hidden;
 }
@@ -283,7 +297,7 @@ hr {
 }
 
 @media (max-width: 900px) {
-    .main-title { font-size: 34px; }
+    .command-title { font-size: 34px; }
     .agent-grid { grid-template-columns: 1fr; }
 }
 </style>
@@ -400,7 +414,7 @@ def create_status_chart(task_df):
     )
 
     fig.update_layout(
-        height=350,
+        height=360,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#e5e7eb"),
@@ -426,7 +440,7 @@ def create_priority_chart(task_df):
     )
 
     fig.update_layout(
-        height=350,
+        height=360,
         paper_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#e5e7eb"),
         margin=dict(l=20, r=20, t=55, b=20),
@@ -451,7 +465,7 @@ def create_deadline_chart(task_df):
     )
 
     fig.update_layout(
-        height=350,
+        height=340,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#e5e7eb"),
@@ -508,7 +522,7 @@ Completion Percentage: {completion_percent}%
 ## Workflow Plan
 {st.session_state.workflow_plan}
 
-## Task Board
+## Task Checklist
 {task_df_to_text(st.session_state.task_df)}
 
 ## Priority Agent Report
@@ -518,7 +532,7 @@ Completion Percentage: {completion_percent}%
 {st.session_state.message_report}
 
 ## Final Recommendation
-Start with high-priority tasks first, remove blockers early, personalize outreach messages, and follow the timeline step by step.
+Start with high-priority tasks, complete blocked items early, review outreach messages, and follow the timeline step by step.
 """
 
     return report
@@ -554,26 +568,26 @@ def render_metric(label, value, note):
 
 
 def render_agent_pipeline(agent_status):
-    agents = [
-        ("01", "RAG Engine", "Retrieves useful context from uploaded documents."),
-        ("02", "Planner", "Turns the goal into a structured workflow."),
-        ("03", "Task", "Converts the workflow into a task board."),
-        ("04", "Priority", "Finds critical tasks and execution risks."),
-        ("05", "Message", "Creates recruiter email and LinkedIn drafts."),
+    cards = [
+        ("01", "RAG Engine", "Document context retrieval"),
+        ("02", "Planner", "Goal to workflow plan"),
+        ("03", "Task", "Checklist generation"),
+        ("04", "Priority", "Execution guidance"),
+        ("05", "Message", "Outreach drafts"),
     ]
 
     html = '<div class="agent-grid">'
 
-    for number, name, desc in agents:
+    for number, name, desc in cards:
         done = agent_status.get(name, False)
-        status_class = "agent-done" if done else "agent-waiting"
         status_text = "Completed" if done else "Waiting"
+        status_class = "agent-status" if done else "agent-waiting"
 
         html += f"""
         <div class="agent-card">
             <div class="agent-number">{number}</div>
             <div class="agent-name">{name}</div>
-            <div class="agent-desc">{desc}</div>
+            <div style="color:#94a3b8; font-size:13px; line-height:1.5;">{desc}</div>
             <div class="{status_class}">{status_text}</div>
         </div>
         """
@@ -591,8 +605,8 @@ agent_status = get_agent_status()
 completed_agents = sum(1 for status in agent_status.values() if status)
 
 with st.sidebar:
-    st.markdown("## Workflow Controls")
-    st.caption("Run the full agentic automation workflow from here.")
+    st.markdown("## Command Controls")
+    st.caption("Enter a goal and run the multi-agent automation workflow.")
 
     goal = st.text_area(
         "Goal",
@@ -644,13 +658,13 @@ with st.sidebar:
             st.session_state.document_text
         )
 
-        st.success("Document extracted successfully.")
+        st.success("Document extracted.")
         st.caption(f"Words: {len(st.session_state.document_text.split())}")
         st.caption(f"Chunks: {len(st.session_state.document_chunks)}")
 
-    top_k = st.slider("Evidence Sections", 1, 5, 3)
+    top_k = st.slider("Evidence sections", 1, 5, 3)
 
-    run_button = st.button("Launch Automation Workflow")
+    run_button = st.button("Run Automation Workflow")
     clear_button = st.button("Clear Workspace")
 
     if clear_button:
@@ -660,20 +674,19 @@ with st.sidebar:
 
 st.markdown(
     """
-<div class="control-header">
-    <div class="kicker">Week 4 Day 6 - New Professional UI/UX</div>
-    <div class="main-title">Agentic Automation Control Tower</div>
-    <div class="main-subtitle">
-        A professional multi-agent AI dashboard that transforms goals into workflow plans,
-        task boards, priority insights, outreach messages, RAG evidence, and final automation reports.
+<div class="command-header">
+    <div class="command-kicker">Week 4 Day 6 - Professional SaaS Redesign</div>
+    <div class="command-title">Agentic Workflow Command Center</div>
+    <div class="command-subtitle">
+        A multi-agent AI platform that converts goals into structured plans, task boards,
+        priority insights, outreach messages, and downloadable automation reports using RAG-powered context.
     </div>
-    <div class="feature-strip">
-        <div class="feature-chip">Agentic AI</div>
-        <div class="feature-chip">RAG Context</div>
-        <div class="feature-chip">Task Automation</div>
-        <div class="feature-chip">Priority Intelligence</div>
-        <div class="feature-chip">Outreach Drafts</div>
-        <div class="feature-chip">Analytics Dashboard</div>
+    <div class="status-strip">
+        <div class="status-pill">Planner Agent</div>
+        <div class="status-pill">Task Agent</div>
+        <div class="status-pill">Priority Agent</div>
+        <div class="status-pill">Message Agent</div>
+        <div class="status-pill">RAG Engine</div>
     </div>
 </div>
 """,
@@ -683,22 +696,22 @@ st.markdown(
 m1, m2, m3, m4, m5, m6 = st.columns(6)
 
 with m1:
-    render_metric("Tasks", total_tasks, "Generated items")
+    render_metric("Total Tasks", total_tasks, "Generated checklist")
 
 with m2:
-    render_metric("Progress", f"{completion_percent}%", "Completed work")
+    render_metric("Progress", f"{completion_percent}%", "Completed tasks")
 
 with m3:
-    render_metric("High Priority", high_priority, "Important tasks")
+    render_metric("High Priority", high_priority, "Needs attention")
 
 with m4:
-    render_metric("Blocked", blocked, "Needs attention")
+    render_metric("Blocked", blocked, "Execution risks")
 
 with m5:
     render_metric("RAG Score", st.session_state.rag_confidence, "Context match")
 
 with m6:
-    render_metric("Agents", f"{completed_agents}/5", "Completed agents")
+    render_metric("Agents", f"{completed_agents}/5", "Workflow status")
 
 st.progress(completion_percent / 100)
 st.markdown("---")
@@ -709,9 +722,9 @@ with left:
     st.markdown(
         """
     <div class="panel">
-        <div class="panel-title">Agent Execution Pipeline</div>
+        <div class="panel-title">Agent Pipeline</div>
         <div class="panel-copy">
-            This shows how the workflow moves from document retrieval to final communication drafts.
+            This pipeline shows how each AI agent contributes to the automation workflow.
         </div>
     """,
         unsafe_allow_html=True,
@@ -720,22 +733,20 @@ with left:
     st.markdown("</div>", unsafe_allow_html=True)
 
 with right:
-    safe_goal = escape(st.session_state.current_goal) if st.session_state.current_goal else "No active goal yet"
-    safe_company = escape(st.session_state.company_name) if st.session_state.company_name else "Not selected"
-    execution_state = "Active Workflow" if st.session_state.workflow_plan else "Waiting for input"
-
     st.markdown(
         f"""
     <div class="panel">
-        <div class="panel-title">Workflow Summary</div>
-        <div class="panel-copy">Current automation status.</div>
-        <div class="summary-box">
-            <div class="label-small">Current Goal</div>
-            <div class="value-line">{safe_goal}</div>
-            <div class="label-small">Execution State</div>
-            <div class="value-line">{execution_state}</div>
-            <div class="label-small">Target Company</div>
-            <div class="value-line">{safe_company}</div>
+        <div class="panel-title">Automation Summary</div>
+        <div class="panel-copy">
+            Current goal and execution status.
+        </div>
+        <div class="small-label">Current Goal</div>
+        <div style="color:#f8fafc; font-weight:800; margin-bottom:12px;">
+            {st.session_state.current_goal if st.session_state.current_goal else "No goal generated yet"}
+        </div>
+        <div class="small-label">Execution Health</div>
+        <div style="color:#22c55e; font-weight:900; font-size:22px;">
+            {"Active Workflow" if st.session_state.workflow_plan else "Waiting"}
         </div>
     </div>
     """,
@@ -754,7 +765,7 @@ if run_button:
         st.session_state.contact_person = contact_person
 
         if st.session_state.document_chunks:
-            with st.spinner("RAG Engine is retrieving relevant document context..."):
+            with st.spinner("RAG Engine is retrieving document context..."):
                 st.session_state.retrieved_chunks = retrieve_relevant_chunks(
                     goal,
                     st.session_state.document_chunks,
@@ -792,7 +803,7 @@ if run_button:
 
         st.session_state.task_df = parse_task_text(st.session_state.task_text)
 
-        with st.spinner("Priority Agent is analyzing execution plan..."):
+        with st.spinner("Priority Agent is analyzing execution risks..."):
             st.session_state.priority_report = priority_agent(
                 goal,
                 role,
@@ -954,7 +965,7 @@ with tab5:
         f"""
         <div class="evidence-box">
             <b>RAG Confidence Score:</b> {st.session_state.rag_confidence}<br>
-            <b>Evidence Sections Retrieved:</b> {len(st.session_state.retrieved_chunks)}
+            <b>Evidence Sections:</b> {len(st.session_state.retrieved_chunks)}
         </div>
         """,
         unsafe_allow_html=True,
@@ -965,7 +976,7 @@ with tab5:
             with st.expander(f"{item['source']} | Similarity Score: {item['score']}"):
                 st.write(item["chunk"])
     else:
-        st.info("RAG evidence will appear after running with a document.")
+        st.info("Relevant document evidence will appear after running with a document.")
 
 with tab6:
     st.markdown("## Goal History")
